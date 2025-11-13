@@ -1,7 +1,7 @@
 import express from "express";
 import cors from "cors";
 import { studentRouter, teacherRouter } from "./routes";
-import { ClientErrorHandler } from "./middleware/ClientErrorHandler";
+import { ClientErrorHandler } from "./middleware";
 import { config } from "dotenv";
 
 config();
