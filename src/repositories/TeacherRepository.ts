@@ -12,8 +12,8 @@ export const TeacherRepository = (): ITeacherRepository => ({
     },
     create: async (teacher: Teacher) => {
         const newTeacher = {
-            ...teacher,
             id: registeredTeachers.length + 1,
+            ...teacher,
         };
 
         registeredTeachers = [...registeredTeachers, newTeacher];

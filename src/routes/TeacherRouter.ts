@@ -38,6 +38,6 @@ teacherRouter.put("/:id", async (req, res) => {
 teacherRouter.delete("/:id", async (req, res) => {
     const id = Number(req.params.id);
     await teacherService.deleteTeacher(id);
-    res.status(200);
+    res.sendStatus(200)
 })
 

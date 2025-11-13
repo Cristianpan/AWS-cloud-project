@@ -36,6 +36,6 @@ studentRouter.put("/:id", async (req, res) => {
 studentRouter.delete("/:id", async (req, res) => {
     const id = Number(req.params.id);
     await studentService.deleteStudent(id);
-    res.status(200);
+    res.sendStatus(200)
 })
 
