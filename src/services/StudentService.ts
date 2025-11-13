@@ -1,3 +1,4 @@
+import { th } from "zod/v4/locales";
 import { Errors } from "../constants";
 import BadRequestError from "../errors/BadRequest";
 import ResourceNotFound from "../errors/ResourceNotFound";
@@ -9,7 +10,14 @@ export const StudentService = (studentRepository: IStudentRepository) => ({
         return await studentRepository.getAll();
     },
     getStudentById: async (id: number) => {
-        return await studentRepository.getById(id);
+
+        const student = await studentRepository.getById(id);
+
+        if (!student) {
+            throw new ResourceNotFound(Errors.STUDENT_NOT_FOUNT);
+        }
+
+        return student;
     },
     updateStudent: async (student: Student, studentId: number) => {
         const existStudent = await studentRepository.getById(studentId ?? 0);

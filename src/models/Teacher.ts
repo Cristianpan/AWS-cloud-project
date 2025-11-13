@@ -2,7 +2,7 @@ import zod from "zod";
 
 export const TeacherSchema = zod.object({
     id: zod.number().positive().optional(),
-    numeroEmpleado: zod.string().nonoptional({ message: "El numero de empleado es obligatorio" }),
+    numeroEmpleado: zod.number().positive().nonoptional({ message: "El numero de empleado es obligatorio" }),
     nombres: zod.string().nonoptional({ message: "El nombre es obligatorio" }),
     apellidos: zod.string().nonoptional({ message: "Los apellidos son obligatorios" }),
     horasClase: zod

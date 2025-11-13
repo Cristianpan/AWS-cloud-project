@@ -9,7 +9,13 @@ export const TeacherService = (teacherRepository: ITeacherRepository) => ({
         return await teacherRepository.getAll();
     },
     getTeacherById: async (id: number) => {
-        return await teacherRepository.getById(id);
+        const teacher = await teacherRepository.getById(id);
+
+        if (!teacher) {
+            throw new ResourceNotFound(Errors.TEACHER_NOT_FOUNT);
+        }
+
+        return teacher;
     },
     updateTeacher: async (teacher: Teacher, teacherId: number) => {
         const existTeacher = await teacherRepository.getById(teacherId ?? 0);
