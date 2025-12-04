@@ -8,13 +8,13 @@ export const ClientErrorHandler = (
     res: Response,
     next: NextFunction
 ) => {
-    if (err instanceof BadRequestError || err instanceof ResourceNotFound) {
-        res.status(err.statusCode).json({ error: err.message });
-    } 
+    if (res.headersSent) return next(err);
 
-    if (err instanceof Error) {
-        res.status(500).json({ error: "Oop! Algo ha ocurrido por favor intente de nuevo."});
+    if (err instanceof BadRequestError || err instanceof ResourceNotFound) {
+        return res.status(err.statusCode).json({ error: err.message });
     }
 
-    return next(err);
+    if (err instanceof Error) {
+        return res.status(500).json({ error: "Oop! Algo ha ocurrido por favor intente de nuevo." });
+    }
 };

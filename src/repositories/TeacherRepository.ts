@@ -1,3 +1,4 @@
+import { prisma } from "../config/prisma/prismaClient";
 import { Teacher } from "../models";
 import { ITeacherRepository } from "./Interfaces";
 
@@ -5,33 +6,36 @@ let registeredTeachers: Teacher[] = [];
 
 export const TeacherRepository = (): ITeacherRepository => ({
     getAll: async () => {
-        return registeredTeachers;
+        return await prisma.teacher.findMany();
     },
     getById: async (id: number) => {
-        return registeredTeachers.find((teacher) => teacher.id === id) || null;
+        return await prisma.teacher.findUnique({ where: { id } });
     },
     create: async (teacher: Teacher) => {
-        const newTeacher = {
-            id: registeredTeachers.length + 1,
-            ...teacher,
-        };
-
-        registeredTeachers = [...registeredTeachers, newTeacher];
+        const { id, ...teacherData } = teacher;
+        const newTeacher = await prisma.teacher.create({
+            data: {
+                ...teacherData,
+            },
+        });
 
         return newTeacher;
     },
     update: async (teacher: Teacher) => {
-        registeredTeachers = registeredTeachers.map((registeredTeacher) => {
-            if (registeredTeacher.id === teacher.id) {
-                return teacher;
-            }
-            return registeredTeacher;
+        const { id: teacherId, ...teacherData } = teacher;
+        const teacherUpdated = await prisma.teacher.update({
+            where: {
+                id: teacherId!,
+            },
+            data: {
+                ...teacherData,
+            },
         });
 
-        return teacher;
+        return teacherUpdated;
     },
     delete: async (teacherId: number) => {
-        registeredTeachers = registeredTeachers.filter((teacher) => teacher.id !== teacherId);
+        await prisma.teacher.delete({ where: { id: teacherId } });
 
         return;
     },

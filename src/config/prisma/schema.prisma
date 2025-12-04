@@ -1,0 +1,25 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "mysql"
+}
+
+model Student {
+  id            Int     @id @default(autoincrement())
+  nombres       String
+  apellidos     String
+  matricula     String  @unique
+  promedio      Float   
+  fotoPerfilUrl String?  @db.Text
+}
+
+model Teacher {
+  id             Int    @id @default(autoincrement())
+  numeroEmpleado Int
+  nombres        String
+  apellidos      String
+  horasClase     Int
+}

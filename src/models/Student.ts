@@ -8,7 +8,8 @@ export const StudentSchema = zod.object({
     promedio: zod
         .number()
         .positive({ message: "El promedio debe ser mayor o igual a cero" })
-        .nonoptional({ message: "El promedio es obligatorio" })
+        .nonoptional({ message: "El promedio es obligatorio" }),
+    fotoPerfilUrl: zod.string().nullable()
 });
 
 export type Student = zod.infer<typeof StudentSchema>;
