@@ -2,6 +2,7 @@ import { StudentService } from "./../services/StudentService";
 import { StudentRepository } from "./../repositories/StudentRepository";
 import { Router } from "express";
 import { NotAllowedMethodsHandler } from "../middleware";
+import { sendEmailNotification } from "../config/aws/sns";
 
 export const studentRouter = Router();
 
@@ -41,6 +42,19 @@ studentRouter.put("/:id", async (req, res) => {
 studentRouter.delete("/:id", async (req, res) => {
     const id = Number(req.params.id);
     await studentService.deleteStudent(id);
+    res.sendStatus(200);
+});
+
+studentRouter.post("/:id/email", async (req, res) => {
+    const id = Number(req.params.id);
+    const student = await studentService.getStudentById(id);
+
+    const { nombres, apellidos, promedio } = student;
+
+    await sendEmailNotification(
+        "Calificaciones",
+        `Alumno: ${nombres} ${apellidos} - Promedio: ${promedio}`
+    );
     res.sendStatus(200);
 });
 
