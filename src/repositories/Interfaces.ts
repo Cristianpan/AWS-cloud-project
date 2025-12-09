@@ -27,3 +27,7 @@ export interface ITeacherRepository {
     update(teacher: Teacher): Promise<Teacher>;
     delete(id: number): Promise<void>;
 }
+
+export interface IBucketRepository {
+    uploadFile(file: Express.Multer.File): Promise<string>;
+}

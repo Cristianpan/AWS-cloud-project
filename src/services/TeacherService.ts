@@ -30,7 +30,7 @@ export const TeacherService = (teacherRepository: ITeacherRepository) => ({
             throw new BadRequestError(validatorResult.error.message);
         }
 
-        return await teacherRepository.update(teacher);
+        return await teacherRepository.update({...existTeacher, ...teacher});
     },
     createTeacher: async (teacher: Teacher) => {
         const validatorResult = TeacherSchema.safeParse(teacher);

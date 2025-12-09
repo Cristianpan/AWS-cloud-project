@@ -14,7 +14,7 @@ export const AuthService = <T extends AuthUser>(
             throw new ResourceNotFound(Errors.STUDENT_NOT_FOUNT);
         }
 
-        if (await comparePassword(password, user.password)) {
+        if (!await comparePassword(password, user.password)) {
             throw new BadRequestError(Errors.INVALID_CREDENTIALS);
         }
 
@@ -50,6 +50,6 @@ export const AuthService = <T extends AuthUser>(
             throw new BadRequestError(Errors.SESSION_USER_MISMATCH);
         }
 
-        await sessionRepository.invalidSession(sessionString);
+        await sessionRepository.invalidSession(session.id);
     },
 });

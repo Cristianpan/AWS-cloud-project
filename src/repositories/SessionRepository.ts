@@ -6,7 +6,7 @@ import { PutCommand, QueryCommand, UpdateCommand } from "@aws-sdk/lib-dynamodb";
 import { Session } from "../models/Session";
 
 export const SessionRepository = (): ISessionRepository => {
-    const TABLE_NAME = "sessions";
+    const TABLE_NAME = "session";
     return {
         createSession: async (userId: number) => {
             const session = {
@@ -30,7 +30,7 @@ export const SessionRepository = (): ISessionRepository => {
         getSession: async (sessionString: string) => {
             const result = await dynamodb.send(
                 new QueryCommand({
-                    TableName: "sesiones-alumnos",
+                    TableName: TABLE_NAME,
                     IndexName: "sessionString-index",
                     KeyConditionExpression: "sessionString = :token",
                     ExpressionAttributeValues: {
@@ -42,12 +42,12 @@ export const SessionRepository = (): ISessionRepository => {
             return result.Items?.[0] as Session;
         },
 
-        invalidSession: async (sessionId: string) => {
+        invalidSession: async (id: string) => {
             await dynamodb.send(
                 new UpdateCommand({
                     TableName: TABLE_NAME,
                     Key: {
-                        id: sessionId,
+                        id
                     },
                     UpdateExpression: "SET active = :active",
                     ExpressionAttributeValues: {

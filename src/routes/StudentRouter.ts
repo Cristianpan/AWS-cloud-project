@@ -1,3 +1,4 @@
+import { BucketRepository } from "./../repositories/BucketRepository";
 import { Session } from "./../models/Session";
 import { IUserRepository } from "./../repositories/Interfaces";
 import { StudentService } from "./../services/StudentService";
@@ -5,6 +6,7 @@ import { StudentRepository } from "./../repositories/StudentRepository";
 import { Router } from "express";
 import { NotAllowedMethodsHandler } from "../middleware";
 import { sendEmailNotification } from "../config/aws/sns";
+import { upload } from "../services/UplodadFilesHandler";
 import { SessionRepository } from "../repositories/SessionRepository";
 import { AuthService } from "../services/AuthService";
 import { Student } from "../models";
@@ -12,7 +14,8 @@ import { Student } from "../models";
 export const studentRouter = Router();
 
 const studentRepository = StudentRepository();
-const studentService = StudentService(studentRepository);
+const bucketedRepository = BucketRepository();
+const studentService = StudentService(studentRepository, bucketedRepository);
 const sessionRepository = SessionRepository();
 const authService = AuthService(studentRepository as IUserRepository<Student>, sessionRepository);
 
@@ -46,6 +49,13 @@ studentRouter.put("/:id", async (req, res) => {
     res.json(updatedStudent);
 });
 
+studentRouter.post("/:id/fotoPerfil", upload.single("foto"), async (req, res) => {
+    const id = Number(req.params.id);
+    const file = req.file;
+    const updatedStudent = await studentService.updatePhotoUrl(id, file!);
+    res.json(updatedStudent);
+});
+
 studentRouter.delete("/:id", async (req, res) => {
     const id = Number(req.params.id);
     await studentService.deleteStudent(id);
@@ -62,7 +72,7 @@ studentRouter.post("/:id/email", async (req, res) => {
         "Calificaciones",
         `Alumno: ${nombres} ${apellidos} - Promedio: ${promedio}`
     );
-    res.sendStatus(200);
+    res.json({ message: "Email sent" })
 });
 
 studentRouter.post("/:id/session/login", async (req, res) => {
@@ -80,7 +90,7 @@ studentRouter.post("/:id/session/verify", async (req, res) => {
 
     await authService.verify(sessionString, userId);
 
-    res.status(200);
+     return res.status(200).json({ message: "Session verified" });
 });
 
 studentRouter.post("/:id/session/logout", async (req, res) => {
@@ -89,7 +99,7 @@ studentRouter.post("/:id/session/logout", async (req, res) => {
 
     await authService.logout(sessionString, userId);
 
-    res.status(200);
+    res.status(200).json({ message: "Session logged out" })
 });
 
 studentRouter.use(NotAllowedMethodsHandler(allowedMethodsByPath));

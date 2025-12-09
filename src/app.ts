@@ -6,7 +6,7 @@ import { config } from "dotenv";
 
 config();
 
-const { SERVER_PORT = 3000 } = process.env;
+const { SERVER_PORT = 8080 } = process.env;
 
 const app = express();
 

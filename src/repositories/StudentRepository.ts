@@ -1,5 +1,6 @@
 import { prisma } from "../config/prisma/prismaClient";
 import { Student } from "../models";
+import { hashPassword } from "../utils/passwordEncoder";
 import { IStudentRepository } from "./Interfaces";
 
 export const StudentRepository = (): IStudentRepository => ({
@@ -15,6 +16,7 @@ export const StudentRepository = (): IStudentRepository => ({
         const newstudent = await prisma.student.create({
             data: {
                 ...studentData,
+                password: await hashPassword(student.password),
                 fotoPerfilUrl: student.fotoPerfilUrl ?? null,
             },
         });
