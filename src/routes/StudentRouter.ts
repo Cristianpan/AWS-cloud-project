@@ -1,13 +1,20 @@
+import { Session } from "./../models/Session";
+import { IUserRepository } from "./../repositories/Interfaces";
 import { StudentService } from "./../services/StudentService";
 import { StudentRepository } from "./../repositories/StudentRepository";
 import { Router } from "express";
 import { NotAllowedMethodsHandler } from "../middleware";
 import { sendEmailNotification } from "../config/aws/sns";
+import { SessionRepository } from "../repositories/SessionRepository";
+import { AuthService } from "../services/AuthService";
+import { Student } from "../models";
 
 export const studentRouter = Router();
 
 const studentRepository = StudentRepository();
 const studentService = StudentService(studentRepository);
+const sessionRepository = SessionRepository();
+const authService = AuthService(studentRepository as IUserRepository<Student>, sessionRepository);
 
 const allowedMethodsByPath = [
     { path: /^\/$/, methods: ["GET", "POST"] },
@@ -56,6 +63,33 @@ studentRouter.post("/:id/email", async (req, res) => {
         `Alumno: ${nombres} ${apellidos} - Promedio: ${promedio}`
     );
     res.sendStatus(200);
+});
+
+studentRouter.post("/:id/session/login", async (req, res) => {
+    const id = Number(req.params.id);
+    const password = req.body.password;
+
+    const session = await authService.login(id, password);
+
+    res.json(session);
+});
+
+studentRouter.post("/:id/session/verify", async (req, res) => {
+    const userId = Number(req.params.id);
+    const sessionString = req.body.sessionString;
+
+    await authService.verify(sessionString, userId);
+
+    res.status(200);
+});
+
+studentRouter.post("/:id/session/logout", async (req, res) => {
+    const userId = Number(req.params.id);
+    const sessionString = req.body.sessionString;
+
+    await authService.logout(sessionString, userId);
+
+    res.status(200);
 });
 
 studentRouter.use(NotAllowedMethodsHandler(allowedMethodsByPath));

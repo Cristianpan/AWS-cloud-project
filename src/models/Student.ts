@@ -10,6 +10,7 @@ export const StudentSchema = zod.object({
         .positive({ message: "El promedio debe ser mayor o igual a cero" })
         .nonoptional({ message: "El promedio es obligatorio" }),
     fotoPerfilUrl: zod.string().nullable().optional(),
+    password: zod.string().nonempty({ message: "La contraseña es obligatoria" }),
 });
 
 export type Student = zod.infer<typeof StudentSchema>;

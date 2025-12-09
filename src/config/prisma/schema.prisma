@@ -11,9 +11,10 @@ model Student {
   id            Int     @id @default(autoincrement())
   nombres       String
   apellidos     String
-  matricula     String  @unique
+  matricula     String  
   promedio      Float   
   fotoPerfilUrl String?  @db.Text
+  password      String
 }
 
 model Teacher {

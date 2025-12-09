@@ -1,4 +1,3 @@
-import { th } from "zod/v4/locales";
 import { Errors } from "../constants";
 import BadRequestError from "../errors/BadRequest";
 import ResourceNotFound from "../errors/ResourceNotFound";
